@@ -3,7 +3,7 @@ version: '3'
 services:
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.3.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0
     hostname: elasticsearch
     domainname: ellesmera.org
     ports:
@@ -34,7 +34,7 @@ services:
       - elk
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:5.3.1
+    image: docker.elastic.co/logstash/logstash:6.0.0
     hostname: logstash
     domainname: ellesmera.org
     volumes:
@@ -53,7 +53,7 @@ services:
       - elasticsearch:elasticsearch
 
   kibana:
-    image:  docker.elastic.co/kibana/kibana:5.3.1
+    image:  docker.elastic.co/kibana/kibana:6.0.0
     hostname: kibana
     domainname: ellesmera.org
     volumes:
@@ -64,6 +64,18 @@ services:
       - elk
     depends_on:
       - elasticsearch:elasticsearch
+
+  beats:
+    image:  docker.elastic.co/beats/filebeat:6.0.0
+    hostname: filebeats
+    domainname: ellesmera.org
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch:elasticsearch
+      - kibana:kibana
 
 volumes:
   esdata1:
