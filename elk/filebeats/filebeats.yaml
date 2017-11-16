@@ -1,0 +1,7 @@
+filebeat.prospectors:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/*.log
+output.elasticsearch:
+  hosts: ["kibana:9200"]
