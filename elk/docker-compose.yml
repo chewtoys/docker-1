@@ -70,7 +70,7 @@ services:
     hostname: filebeats
     domainname: ellesmera.org
     volumes:
-      - ./kibana/config/:/usr/share/kibana/config
+      - ./filebeats/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
     networks:
       - elk
     depends_on:
