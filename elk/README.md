@@ -12,12 +12,6 @@ Based on the official images:
 * [logstash](https://github.com/elastic/logstash-docker)
 * [kibana](https://github.com/elastic/kibana-docker)
 
-**Note**: Other branches in this project are available:
-
-* ELK 5 with X-Pack support: https://github.com/deviantony/docker-elk/tree/x-pack
-* ELK 5 in Vagrant: https://github.com/deviantony/docker-elk/tree/vagrant
-* ELK 5 with Search Guard: https://github.com/deviantony/docker-elk/tree/searchguard
-
 # Requirements
 
 ## Setup
