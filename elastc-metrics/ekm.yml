@@ -1,0 +1,79 @@
+version: '3.3'
+
+services:
+
+# ElasticSearch Statements
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.1.2
+    domainname: ellesmera.org
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    deploy:
+        replicas: 1
+        update_config:
+            parallelism: 2
+            delay: 10s
+        restart_policy:
+            condition: on-failure
+        endpoint_mode: vip
+        labels:
+            com.example.description: "POC"
+    volumes:
+      - ./configs/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - docker2docker
+
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.1.2
+    restart: always
+    domainname: ellesmera.org
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - docker2docker
+
+# MetricBeats Statements
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:6.1.2
+    restart: always
+    domainname: ellesmera.org
+    volumes:
+      - ./configs/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - docker2docker
+
+# Kibana Statements
+  kibana:
+    image:  docker.elastic.co/kibana/kibana:6.1.2
+    restart: always
+    domainname: ellesmera.org
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    volumes:
+      - ./configs/kibana.yml:/usr/share/kibana/kibana.yml
+    ports:
+      - "5601:5601"
+    networks:
+      - docker2docker
+
+volumes:
+    esdata1:
+      external: true
+    esdata2:
+      external: true
+
+networks:
+    docker2docker:
+        external: true

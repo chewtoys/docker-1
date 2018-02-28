@@ -1,0 +1,47 @@
+version: '3.3'
+
+services:
+
+  adminer:
+    image: adminer
+    restart: always
+    hostname: adminersrv
+    ports:
+      - 8008:8080
+    networks:
+      - docker2docker
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - "mysqld:/var/lib/mysql"
+    ports:
+      - 3306:3306
+    networks:
+      - docker2docker
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - "postgresql:/var/lib/postgresql/data"
+    ports:
+      - 5432:5432
+    networks:
+      - docker2docker
+
+      
+networks:
+    docker2docker:
+        external: true
+    
+volumes:
+  postgresql:
+    external: true
+  mysqld:
+    external: true

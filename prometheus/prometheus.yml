@@ -1,0 +1,84 @@
+version: '3.3'
+
+services:
+
+  prometheus:
+  
+    image: prom/prometheus
+    restart: always
+    domainname: ellesmera.org
+    ipc: host
+    volumes:
+        - type: bind
+          source: ./config/prometheus.yml
+          target: /etc/prometheus/prometheus.yml
+        - /var/run/docker.sock:/var/run/docker.sock
+
+    deploy:
+        replicas: 1
+        update_config:
+            parallelism: 2
+            delay: 10s
+        restart_policy:
+            condition: on-failure
+        endpoint_mode: vip
+        labels:
+            com.example.description: "Prometheus POC"
+        resources:
+            limits:
+                cpus: '0.50'
+                memory: 1G
+            reservations:
+                cpus: '0.25'
+                memory: 800M
+
+    ports:
+        - target: 9090
+          published: 9090
+          protocol: tcp
+
+    networks:
+        - docker2docker
+
+
+  grafana:
+
+    image: grafana/grafana
+    restart: always
+    domainname: ellesmera.org
+    ipc: host
+    volumes:
+        - grafana:/var/lib/grafana
+    deploy:
+        replicas: 1
+        update_config:
+            parallelism: 2
+            delay: 10s
+        restart_policy:
+            condition: on-failure
+        endpoint_mode: vip
+        labels:
+            com.example.description: "Grafana POC"
+        resources:
+            limits:
+                cpus: '0.50'
+                memory: 1G
+            reservations:
+                cpus: '0.25'
+                memory: 800M
+
+    ports:
+        - target: 3000
+          published: 3000
+          protocol: tcp
+
+    networks:
+        - docker2docker
+
+volumes:
+    grafana:
+        external: true
+
+networks:
+    docker2docker:
+        external: true

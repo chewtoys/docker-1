@@ -16,7 +16,7 @@ services:
       xpack.watcher.enabled: "false"
       http.host: "0.0.0.0"
       cluster.name: "docker-cluster"
-      node.name: ${HOSTNAME}
+      #node.name: ${HOSTNAME}
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
     ulimits:
       memlock:
