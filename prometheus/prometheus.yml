@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 services:
 
@@ -6,37 +6,58 @@ services:
   
     image: prom/prometheus
     restart: always
-    domainname: ellesmera.org
+    domainname: ellesmera.de
     ipc: host
+
+    # Volumes to be mounted 
     volumes:
         - type: bind
           source: ./config/prometheus.yml
           target: /etc/prometheus/prometheus.yml
         - /var/run/docker.sock:/var/run/docker.sock
-
+    
+    # Application part (deployment, rolling upadte, resource limits)
     deploy:
         replicas: 1
+        mode: replicated
+        placement:
+            constraints:
+                - node.role == manager
         update_config:
             parallelism: 2
             delay: 10s
+            failure_action: rollback
+            order: stop-first
         restart_policy:
             condition: on-failure
+            delay: 5s
+            window: 10s
         endpoint_mode: vip
         labels:
-            com.example.description: "Prometheus POC"
+            de.ellesmera.description: "Prometheus Monitoring Tool"
+        # Computer limitation
         resources:
             limits:
-                cpus: '0.50'
-                memory: 1G
+                cpus: '1.0'
+                memory: 2G
             reservations:
-                cpus: '0.25'
-                memory: 800M
+                cpus: '1.0'
+                memory: 1G
 
+    # Docker log control to try avoid disk space issue
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "200M"
+            max-file: "50"
+
+    # Ports to be used by the container 
     ports:
         - target: 9090
           published: 9090
           protocol: tcp
-
+    
+    # Networks
     networks:
         - docker2docker
 
@@ -45,12 +66,16 @@ services:
 
     image: grafana/grafana
     restart: always
-    domainname: ellesmera.org
+    domainname: ellesmera.de
     ipc: host
     volumes:
         - grafana:/var/lib/grafana
     deploy:
         replicas: 1
+        mode: replicated
+        placement:
+            constraints:
+                - node.role == manager
         update_config:
             parallelism: 2
             delay: 10s
@@ -58,7 +83,7 @@ services:
             condition: on-failure
         endpoint_mode: vip
         labels:
-            com.example.description: "Grafana POC"
+            de.ellesmera.description: "Grafana Dashboard Monitoring"
         resources:
             limits:
                 cpus: '0.50'
@@ -66,6 +91,11 @@ services:
             reservations:
                 cpus: '0.25'
                 memory: 800M
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "200M"
+            max-file: "10"
 
     ports:
         - target: 3000
