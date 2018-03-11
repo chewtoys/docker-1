@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 services:
 
@@ -10,6 +10,7 @@ services:
       memlock:
         soft: -1
         hard: -1
+
     deploy:
         replicas: 1
         update_config:
@@ -20,6 +21,7 @@ services:
         endpoint_mode: vip
         labels:
             com.example.description: "POC"
+
         resources:
             limits:
                 cpus: '0.50'
@@ -29,12 +31,15 @@ services:
                 memory: 800M
     volumes:
       - ./config/config.yaml:/config.yaml
+
     ports:
       - 9090:9090
       - 8080:8080
+
     networks:
       - docker2docker
 
 networks:
+
     docker2docker:
         external: true
