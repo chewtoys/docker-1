@@ -1,0 +1,3 @@
+2018/03/19 19:06:16 [xorm] [warn]  2018/03/19 19:06:16.120410 Table user Column max_repo_creation db default is '-1'::integer, struct default is -1
+2018/03/19 19:06:30 [xorm] [warn]  2018/03/19 19:06:30.186218 Table user Column max_repo_creation db default is '-1'::integer, struct default is -1
+2018/03/19 19:06:45 [xorm] [warn]  2018/03/19 19:06:45.257394 Table user Column max_repo_creation db default is '-1'::integer, struct default is -1
