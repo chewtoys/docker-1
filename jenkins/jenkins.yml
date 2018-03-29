@@ -37,11 +37,11 @@ services:
 
         resources:
             limits:
-                cpus: '2.0'
-                memory: 3G
-            reservations:
-                cpus: '1.0'
+                cpus: '0.5'
                 memory: 2G
+            reservations:
+                cpus: '0.05'
+                memory: 1G
 
     # Docker log control to try avoid disk space issue
     logging:
