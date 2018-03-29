@@ -1,11 +1,32 @@
-version: '3.3'
+version: '3.5'
 
 services:
 
   adminer:
     image: adminer
     restart: always
-    hostname: adminersrv
+
+    # Deployment information
+    deploy:
+        replicas: 1
+        update_config:
+            parallelism: 2
+            delay: 10s
+        restart_policy:
+            condition: on-failure
+        endpoint_mode: vip
+        labels:
+            com.example.description: "Adminer Database"
+
+    #     # Resource limits 
+    #     resources:
+    #         limits:
+    #             cpus: '1.0'
+    #             memory: 2.0G
+    #         reservations:
+    #             cpus: '0.50'
+    #             memory: 500M
+
     ports:
       - 8008:8080
     networks:
@@ -16,6 +37,28 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
+
+    # Deployment information
+    deploy:
+        replicas: 1
+        update_config:
+            parallelism: 2
+            delay: 10s
+        restart_policy:
+            condition: on-failure
+        endpoint_mode: vip
+        labels:
+            com.example.description: "MySQL Database"
+
+        # Resource limits 
+        resources:
+            limits:
+                cpus: '1.0'
+                memory: 2.0G
+            reservations:
+                cpus: '0.50'
+                memory: 500M
+
     volumes:
       - "mysqld:/var/lib/mysql"
     ports:
@@ -28,6 +71,28 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: example
+
+    # Deployment information
+    deploy:
+        replicas: 1
+        update_config:
+            parallelism: 2
+            delay: 10s
+        restart_policy:
+            condition: on-failure
+        endpoint_mode: vip
+        labels:
+            com.example.description: "PostgreSQL Database"
+
+    #     # Resource limits 
+    #     resources:
+    #         limits:
+    #             cpus: '1.0'
+    #             memory: 2.0G
+    #         reservations:
+    #             cpus: '0.50'
+    #             memory: 500M
+
     volumes:
       - "postgresql:/var/lib/postgresql/data"
     ports:
