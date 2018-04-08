@@ -1,0 +1,64 @@
+version: '3.3'
+        
+services:
+
+  server:
+    image: consul:latest
+    environment:
+      HOSTNAME: consul_server
+    command: consul agent -server -config-file /consul/config/config.json
+    volumes:
+      - consul:/consul/data
+      - ./server_config/config.json:/consul/config/config.json:rw
+    deploy:
+      mode: global
+      endpoint_mode: dnsrr
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 120s
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          memory: 1G
+    ports:
+      - target: 8500
+        published: 8500
+        mode: host
+    networks:
+      docker2docker:
+        aliases:
+          - consul.server
+
+
+  registrator:
+    image: gliderlabs/registrator:latest
+    command: -resync 15 -internal consul://server:8500
+
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+    depends_on:
+      - server
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+        delay: 5s
+    networks:
+      - docker2docker
+    
+volumes:
+  consul: 
+    external: true
+
+networks:
+    docker2docker:
+        external: true
+    host:
+        external: true
