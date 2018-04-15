@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+
+  admin2:
+    image: nginx
+    environment:
+      SERVICE_NAME: admin2
+      SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:admin2.ellesmera.com
+    labels:
+      - "traefik.frontend.rule=Host:admin2.ellesmera.com"      
+    deploy:
+      replicas: 1
+    networks:
+      - docker2docker
+    # logging:
+    #   driver: gelf
+    #   options:
+    #     gelf-address: udp://logstash:12201
+    #     tag: "staging"
+    volumes:
+      - ./html/1/index.html:/usr/share/nginx/html/index.html
+
+  portal2:
+    image: nginx
+    environment:
+      SERVICE_NAME: portal2
+      SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:portal2.ellesmera.com
+    labels:
+      - "traefik.frontend.rule=Host:portal2.ellesmera.com"
+    volumes:
+      - ./html/2/index.html:/usr/share/nginx/html/index.html
+    # logging:
+    #   driver: gelf
+    #   options:
+    #     gelf-address: udp://logstash:12201
+    #     tag: "staging"
+    deploy:
+      replicas: 1
+    networks:
+      - docker2docker
+
+  whoami:
+    image: emilevauge/whoami
+    environment:
+      SERVICE_NAME: whoami
+      SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:whoami.ellesmera.com
+    labels:
+      - "traefik.frontend.rule=Host:whoami.ellesmera.com"
+    # logging:
+    #   driver: gelf
+    #   options:
+    #     gelf-address: udp://logstash:12201
+    #     tag: "staging"
+    deploy:
+      replicas: 1
+    networks:
+      - docker2docker
+
+networks:
+  docker2docker:
+    external: true
