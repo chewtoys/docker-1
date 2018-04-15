@@ -11,7 +11,8 @@ services:
       - consul:/consul/data
       - ./server_config/config.json:/consul/config/config.json:rw
     deploy:
-      mode: global
+      mode: replicated
+      replicas: 1
       endpoint_mode: dnsrr
       update_config:
         parallelism: 1
@@ -31,6 +32,12 @@ services:
       - target: 8500
         published: 8500
         mode: host
+    expose:
+      - "8300"
+      - "8301"
+      - "8301/udp"
+      - "8302"
+      - "8302/udp"
     networks:
       docker2docker:
         aliases:
