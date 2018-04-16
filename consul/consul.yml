@@ -46,7 +46,7 @@ services:
 
   registrator:
     image: gliderlabs/registrator:latest
-    command: -resync 15 -internal consul://server:8500
+    command: -resync 5 -internal -deregister always consul://consul_server:8500
 
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
@@ -60,6 +60,7 @@ services:
     networks:
       - docker2docker
     
+
 volumes:
   consul: 
     external: true
