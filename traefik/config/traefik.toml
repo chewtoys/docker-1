@@ -75,6 +75,8 @@ defaultEntryPoints = ["http"]
 
   watch = true
 
+  swarmmode = true
+
   # endpoint = "tcp://10.10.10.10:2375"
   endpoint = "unix:///var/run/docker.sock"
 
@@ -90,7 +92,7 @@ defaultEntryPoints = ["http"]
 [consulCatalog]
 
   watch = true
-
+  
   endpoint = "consul_server:8500"
 
   exposedByDefault = false
@@ -111,12 +113,12 @@ defaultEntryPoints = ["http"]
   #
   frontEndRule = "Host:{{.ServiceName}}.{{.Domain}}"
 
-[web]
+[metrics]
 
   watch = true
   
   # To enable Traefik to export internal metrics to Prometheus
-  [web.metrics.prometheus]
+  [metrics.prometheus]
 
   buckets=[0.1,0.3,1.2,5.0]
 
@@ -133,7 +135,7 @@ defaultEntryPoints = ["http"]
   passTLSCert = true
   priority = 10
     [frontends.admin2.routes.admin2]
-      rule = "Host:admin2.ellesmera.com,Host:whoami.ellesmera.com,Host:portal2.ellesmera.com"
+      rule = "Host:admin2.ellesmera.com"
 
 
 # Backend definition
@@ -141,15 +143,10 @@ defaultEntryPoints = ["http"]
 
   [backends.admin2]
     [backends.admin2.LoadBalancer]
-    sticky = false
     method = "wrr"
     [backends.admin2.servers.server1]
-    url = "http://admin2"
+    url = "http://admin1"
     weight = 10
     [backends.admin2.servers.server2]
-    url = "http://whoami"
-    weight = 8
-    [backends.admin2.servers.server3]
-    url = "http://portal2"
-    weight = 6
-  
+    url = "http://admin2"
+    weight = 10
