@@ -6,8 +6,11 @@ services:
   
     image: jenkins:latest
     restart: always
-    domainname: ellesmera.de
-    ipc: host
+
+    environment:
+        # metadata to registrator
+        SERVICE_NAME: jenkins
+        SERVICE_TAGS: ci,cd,deploy
 
     # Volumes to be mounted 
     volumes:
