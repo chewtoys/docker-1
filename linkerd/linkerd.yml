@@ -3,9 +3,13 @@ version: '3.5'
 services:
 
 # Linked Admin
-  admin:
+  linkerd:
     image: buoyantio/linkerd:1.3.6
-    domainname: ellesmera.org
+
+    # metadata to registrator
+    environment:
+        SERVICE_NAME: linkerd
+        SERVICE_TAGS: proxy, load_balancer
 
     ulimits:
       memlock:
@@ -44,6 +48,7 @@ services:
     ports:
       - 9990:9990
       - 8080:8080
+      - 4140:4140
 
     # networking information
     networks:
