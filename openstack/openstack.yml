@@ -6,11 +6,14 @@ services:
   
     image: chrisrock/openstack-cli
     restart: always
-    domainname: ellesmera.org
-    ipc: host
+
+    environment:
+    # metadata to registrator
+        SERVICE_NAME: openstack
+        SERVICE_TAGS: iaas,cm
+
     volumes:
       - ./config/:/config
-      - /Users/rodrigo.carvalho/Downloads/isos:/mnt
 
     deploy:
         replicas: 1
@@ -29,6 +32,7 @@ services:
             reservations:
                 cpus: '0.25'
                 memory: 800M
+                
     networks:
         - docker2docker
 
