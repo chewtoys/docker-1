@@ -7,6 +7,11 @@ services:
     image: gogs/gogs
     domainname: ellesmera.org
 
+# metadata to registrator
+    environment:
+        - SERVICE_NAME=gogs
+        - SERVICE_TAGS=scm,git,web
+
     ulimits:
       memlock:
         soft: -1
@@ -52,4 +57,6 @@ services:
 # external networks
 networks:
     docker2docker:
+        external: true
+    host:
         external: true
