@@ -6,8 +6,11 @@ services:
   
     image: prom/prometheus
     restart: always
-    domainname: ellesmera.de
-    ipc: host
+
+    # metadata to registrator
+    environment:
+        SERVICE_NAME: prometheus
+        SERVICE_TAGS: monitoring,alerting
 
     # Volumes to be mounted 
     volumes:
@@ -67,10 +70,14 @@ services:
 
     image: grafana/grafana
     restart: always
-    domainname: ellesmera.de
-    ipc: host
     volumes:
         - grafana:/var/lib/grafana
+        
+    # metadata to registrator
+    environment:
+        SERVICE_NAME: grafana
+        SERVICE_TAGS: dashboard
+
     deploy:
         replicas: 1
         mode: replicated
@@ -100,10 +107,7 @@ services:
             max-file: "10"
 
     ports:
-        - target: 3000
-          published: 3000
-          protocol: tcp
-
+        - '3000:3000'
     networks:
         - docker2docker
 
