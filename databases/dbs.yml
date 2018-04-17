@@ -6,6 +6,11 @@ services:
     image: adminer
     restart: always
 
+    # metadata to registrator
+    environment:
+        SERVICE_NAME: adminer
+        SERVICE_TAGS: dbs,admin
+
     # Deployment information
     deploy:
         replicas: 1
@@ -37,6 +42,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
+# metadata to registrator
+      SERVICE_NAME: mysql
+      SERVICE_TAGS: dbs,mysql
 
     # Deployment information
     deploy:
@@ -71,7 +79,11 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: example
-
+      
+    # metadata to registrator
+      SERVICE_NAME: postgresql
+      SERVICE_TAGS: dbs,postgresql
+      
     # Deployment information
     deploy:
         replicas: 1
