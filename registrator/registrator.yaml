@@ -32,18 +32,6 @@ services:
       restart_policy:
         condition: any
         delay: 5s
-        
-  proxy:
-    image: nginx
-    ports:
-      - 80:80
-      - 443:443
-    networks:
-      - docker2docker
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
 
 networks:
     docker2docker:
