@@ -23,7 +23,8 @@ defaultEntryPoints = ["http"]
    compress = true
 
 [file]
-  watch = true
+filename = "/etc/traefik/traefik.toml"
+watch = true
   
 ################################################################
 # Traefik logs configuration
@@ -91,7 +92,7 @@ defaultEntryPoints = ["http"]
 # Enable Consul Catalog configuration backend.
 [consulCatalog]
 
-  watch = true
+  watch = false
   
   endpoint = "consul_server:8500"
 
@@ -101,16 +102,16 @@ defaultEntryPoints = ["http"]
 
   prefix = "traefik"
 
-  # Default frontEnd Rule for Consul services.
-  #
-  # The format is a Go Template with:
-  # - ".ServiceName", ".Domain" and ".Attributes" available
-  # - "getTag(name, tags, defaultValue)", "hasTag(name, tags)" and "getAttribute(name, tags, defaultValue)" functions are available
-  # - "getAttribute(...)" function uses prefixed tag names based on "prefix" value
-  #
-  # Optional
-  # Default: "Host:{{.ServiceName}}.{{.Domain}}"
-  #
+#   # Default frontEnd Rule for Consul services.
+#   #
+#   # The format is a Go Template with:
+#   # - ".ServiceName", ".Domain" and ".Attributes" available
+#   # - "getTag(name, tags, defaultValue)", "hasTag(name, tags)" and "getAttribute(name, tags, defaultValue)" functions are available
+#   # - "getAttribute(...)" function uses prefixed tag names based on "prefix" value
+#   #
+#   # Optional
+#   # Default: "Host:{{.ServiceName}}.{{.Domain}}"
+#   #
   frontEndRule = "Host:{{.ServiceName}}.{{.Domain}}"
 
 [metrics]
@@ -125,28 +126,26 @@ defaultEntryPoints = ["http"]
 ############################# Custom settings ###################################
 
 
-
-  # Frontend definition
-[frontends]
-
-  [frontends.admin2]
-  backend = "admin2"
-  passHostHeader = true
-  passTLSCert = true
-  priority = 10
-    [frontends.admin2.routes.admin2]
-      rule = "Host:admin2.ellesmera.com"
-
-
 # Backend definition
 [backends]
 
-  [backends.admin2]
-    [backends.admin2.LoadBalancer]
-    method = "wrr"
-    [backends.admin2.servers.server1]
-    url = "http://admin1"
-    weight = 10
-    [backends.admin2.servers.server2]
-    url = "http://admin2"
-    weight = 10
+  [backends.backend1]
+    [backends.backend1.LoadBalancer]
+    method = "drr"
+    [backends.backend1.servers.new]
+    url = "http://portal2"
+    weight = 5
+    [backends.backend1.servers.legacy]
+    url = "http://portal1"
+    weight = 2
+
+# Frontend definition
+[frontends]
+
+  [frontends.portal2]
+  backend = "backend1"
+  passHostHeader = true
+  passTLSCert = true
+  priority = 10
+    [frontends.portal2.routes.portal2]
+      rule = "HostRegexp:ellesmera.com,{subdomain:[a-z][0-9]+}.ellesmera.com"
