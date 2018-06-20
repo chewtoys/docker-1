@@ -137,13 +137,14 @@ watch = true
     weight = 5
     [backends.backend1.servers.legacy]
     url = "http://portal1"
-    weight = 2
+    weight = 3
 
 # Frontend definition
 [frontends]
 
   [frontends.portal2]
   backend = "backend1"
+  FrameDeny = true
   passHostHeader = true
   passTLSCert = true
   priority = 10
