@@ -9,7 +9,7 @@ services:
       SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:portal1.ellesmera.com
     labels:
       - "traefik.backend=ellesmera.com"
-      - "traefik.frontend.rule=Host:portal1.ellesmera.com"      
+      - "traefik.frontend.rule=Host:portal.ellesmera.com"      
     deploy:
       replicas: 1
     networks:
@@ -29,7 +29,7 @@ services:
       SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:portal2.ellesmera.com
     labels:
       - "traefik.backend=ellesmera.com"
-      - "traefik.frontend.rule=Host:portal2.ellesmera.com"
+      - "traefik.frontend.rule=Host:portal.ellesmera.com"
     volumes:
       - ./html/2/index.html:/usr/share/nginx/html/index.html
     # logging:
