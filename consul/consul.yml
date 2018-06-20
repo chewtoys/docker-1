@@ -33,12 +33,12 @@ services:
       - target: 8500
         published: 8500
         mode: host
-    expose:
-      - "8300"
-      - "8301"
-      - "8301/udp"
-      - "8302"
-      - "8302/udp"
+    # expose:
+    #   - "8300"
+    #   - "8301"
+    #   - "8301/udp"
+    #   - "8302"
+    #   - "8302/udp"
     networks:
       docker2docker:
         aliases:
