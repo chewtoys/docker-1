@@ -125,6 +125,17 @@ watch = true
 
 ############################# Custom settings ###################################
 
+# Frontend definition
+[frontends]
+
+  [frontends.portal2]
+  backend = "backend1"
+  FrameDeny = true
+  passHostHeader = true
+  passTLSCert = true
+  priority = 10
+    [frontends.portal2.routes.portal2]
+      rule = "HostRegexp:ellesmera.com,{subdomain:[a-z][0-9]+}.ellesmera.com"
 
 # Backend definition
 [backends]
@@ -139,14 +150,3 @@ watch = true
     url = "http://portal1"
     weight = 3
 
-# Frontend definition
-[frontends]
-
-  [frontends.portal2]
-  backend = "backend1"
-  FrameDeny = true
-  passHostHeader = true
-  passTLSCert = true
-  priority = 10
-    [frontends.portal2.routes.portal2]
-      rule = "HostRegexp:ellesmera.com,{subdomain:[a-z][0-9]+}.ellesmera.com"
