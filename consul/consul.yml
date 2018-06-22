@@ -1,19 +1,32 @@
 version: '3.5'
-        
+
 services:
 
-  consul_server:
-    image: consul:latest
+  client:
+    image: consul
     environment:
-      HOSTNAME: consul_server
-      CONSUL_UI_BETA: "true"
-    command: consul agent -server -config-file /consul/config/config.json
+      SERVICE_NAME: client
+    command: "agent -retry-join server-bootstrap -client 0.0.0.0 -bind '{{ GetInterfaceIP \"eth0\" }}'"
+    depends_on:
+      - server-bootstrap
+    deploy:
+      replicas: 2
+    networks:
+      - docker2docker
+
+  server:
+    image: consul
+    environment:
+      SERVICE_NAME: server
+    command: "agent -server -retry-join server-bootstrap -client 0.0.0.0 -bind '{{ GetInterfaceIP \"eth0\" }}'"
     volumes:
       - consul:/consul/data
-      - ./server_config/config.json:/consul/config/config.json:rw
+      # - ./server_config/config.json:/consul/config/config.json:rw
+    depends_on:
+      - server-bootstrap
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       endpoint_mode: dnsrr
       update_config:
         parallelism: 1
@@ -29,25 +42,23 @@ services:
       resources:
         limits:
           memory: 1G
-    ports:
-      - target: 8500
-        published: 8500
-        mode: host
-    # expose:
-    #   - "8300"
-    #   - "8301"
-    #   - "8301/udp"
-    #   - "8302"
-    #   - "8302/udp"
     networks:
-      docker2docker:
-        aliases:
-          - consul.server
-
+      - docker2docker
+      
+  server-bootstrap:
+    image: consul
+    environment:
+      SERVICE_NAME: bootstrap
+      CONSUL_UI_BETA: "true"
+    ports:
+      - "8500:8500"
+    command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0 -bind '{{ GetInterfaceIP \"eth0\" }}'"
+    networks:
+      - docker2docker
 
   registrator:
     image: gliderlabs/registrator:latest
-    command: -resync 5 -internal -deregister always -cleanup consul://consul_server:8500
+    command: -resync 5 -internal -deregister always -cleanup consul://server:8500
 
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
@@ -60,7 +71,6 @@ services:
         delay: 5s
     networks:
       - docker2docker
-    
 
 volumes:
   consul: 
@@ -68,6 +78,4 @@ volumes:
 
 networks:
     docker2docker:
-        external: true
-    host:
         external: true
