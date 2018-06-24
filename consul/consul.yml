@@ -3,9 +3,7 @@ version: '3.5'
 services:
 
   client:
-    image: consul
-    environment:
-      SERVICE_NAME: client
+    image: consul:latest
     command: "agent -retry-join server-bootstrap -client 0.0.0.0 -bind '{{ GetInterfaceIP \"eth0\" }}'"
     depends_on:
       - server-bootstrap
@@ -15,15 +13,10 @@ services:
       - docker2docker
 
   server:
-    image: consul
-    environment:
-      SERVICE_NAME: server
-    command: "agent -server -retry-join server-bootstrap -client 0.0.0.0 -bind '{{ GetInterfaceIP \"eth0\" }}'"
-    volumes:
-      - consul:/consul/data
-      # - ./server_config/config.json:/consul/config/config.json:rw
+    image: consul:latest
     depends_on:
       - server-bootstrap
+    command: "agent -server -retry-join server-bootstrap -client 0.0.0.0 -bind '{{ GetInterfaceIP \"eth0\" }}'"
     deploy:
       mode: replicated
       replicas: 2
@@ -36,9 +29,6 @@ services:
         condition: any
         delay: 5s
         window: 120s
-      placement:
-        constraints:
-          - node.role == manager
       resources:
         limits:
           memory: 1G
@@ -46,9 +36,8 @@ services:
       - docker2docker
       
   server-bootstrap:
-    image: consul
+    image: consul:latest
     environment:
-      SERVICE_NAME: bootstrap
       CONSUL_UI_BETA: "true"
     ports:
       - "8500:8500"
@@ -58,12 +47,11 @@ services:
 
   registrator:
     image: gliderlabs/registrator:latest
-    command: -resync 5 -internal -deregister always -cleanup consul://server:8500
-
+    command: -resync="5" -internal -deregister="always" -cleanup="true" consul://server-bootstrap:8500
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
     depends_on:
-      - server
+      - server-bootstrap
     deploy:
       mode: global
       restart_policy:
