@@ -47,7 +47,7 @@ services:
 
   registrator:
     image: gliderlabs/registrator:latest
-    command: -resync="5" -internal -deregister="always" -cleanup="true" consul://server-bootstrap:8500
+    command: -resync="5" -deregister="always" -cleanup="true" consul://server-bootstrap:8500
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
     depends_on:
