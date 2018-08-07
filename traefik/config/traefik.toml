@@ -72,7 +72,7 @@ defaultEntryPoints = ["http"]
 
   domain = "ellesmera.com"
 
-  exposedbydefault = true
+  exposedbydefault = false
 
 ################################################################
 # Consul Catalog configuration backend
@@ -81,18 +81,19 @@ defaultEntryPoints = ["http"]
 # Enable Consul Catalog configuration backend.
 [consulCatalog]
 
-  watch = false
+  watch = true
   
   endpoint = "consul_server:8500"
 
-  exposedByDefault = false
+  exposedByDefault = true
 
   domain = "ellesmera.com"
 
   prefix = "traefik"
 
+  # frontEndRule = "Host:{{.Tags}}.{{.Domain}}"
   frontEndRule = "Host:{{.ServiceName}}.{{.Domain}}"
-
+  # frontEndRule = "Host:{{getTag  .ServiceName }}.{{.Domain}}"
 [metrics]
 
   watch = true
@@ -101,89 +102,8 @@ defaultEntryPoints = ["http"]
   [metrics.prometheus]
   buckets=[0.1,0.3,1.2,5.0]
 
-[file]
-watch = true
-
-############################# Custom settings ###################################
-
-# Frontend definition
-[frontends]
-
-  [frontends.portal2]
-  backend = "portal2"
-  FrameDeny = true
-  passHostHeader = true
-  passTLSCert = true
-  priority = 10
-    [frontends.portal2.routes.portal2]
-        rule = "HostRegexp: ellesmera.com,portal([0-9])+.ellesmera.com"
-    [frontends.portal2.errors]
-        [frontends.portal2.errors.errorPage0]
-        status = ["500-599"]
-        backend = "error"
-        query = "/{status}.html"
-        [frontends.portal2.errors.errorPage1]
-        status = ["404", "403"]
-        backend = "error"
-        query = "/{status}.html"
-        # ...
-
-    [frontends.portal2.ratelimit]
-        extractorfunc = "client.ip"
-        [frontends.portal2.ratelimit.rateset.rateset1]
-            period = "10s"
-            average = 100
-            burst = 200
-        [frontends.portal2.ratelimit.rateset.rateset2]
-            period = "3s"
-            average = 5
-            burst = 10
-
-  [frontends.vault]
-  backend = "vaultsrv"
-  FrameDeny = true
-  passHostHeader = true
-  passTLSCert = true
-  priority = 20
-    [frontends.vault.routes.vault_1]
-      rule = "Host: vault.ellesmera.com,ellesmera.com"
-
-################# Backend definition #########################
-[backends]
-
-  [backends.portal2]
-    [backends.portal2.circuitbreaker]
-    expression = "NetworkErrorRatio() > 0.5"
-    [backends.portal2.maxconn]
-       amount = 10
-       extractorfunc = "request.host"    
-    [backends.portal2.loadbalancer.stickiness]
-        cookiename = "portal2_cookie"
-    [backends.portal2.healthcheck]
-    path = "/health"
-    interval = "10s"    
-    [backends.portal2.LoadBalancer]
-    method = "drr"
-    [backends.portal2.servers.new]
-    url = "http://portal2"
-    weight = 5
-    [backends.portal2.servers.legacy]
-    url = "http://portal1"
-    weight = 2
-
-  [backends.vault]
-    [backends.vault.circuitbreaker]
-    expression = "NetworkErrorRatio() > 0.5"
-    [backends.vault.maxconn]
-       amount = 10
-       extractorfunc = "request.host"    
-    [backends.vault.loadbalancer.stickiness]
-        cookiename = "vault_cookie"
-    [backends.vault.healthcheck]
-    path = "/health"
-    interval = "10s"    
-    [backends.vault.LoadBalancer]
-    method = "drr"
-    [backends.vault.servers.new]
-    url = "http://vault_server"
-    weight = 5
+# [file]
+# watch = false
+# directory = "/rules"
+  
+[retry]

@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.6'
 
 services:
 
@@ -8,7 +8,10 @@ services:
       HOSTNAME: traefik
       SERVICE_NAME: traefik
       SERVICE_TAGS: lb, proxy
-    command: --api --file --file.watch  --docker --docker.watch --logLevel=DEBUG
+    labels:
+      - "SERVICE_IGNORE=true"      
+      - "traefik.enable=false"   
+    command: --file.watch --docker --docker.watch --docker.domain=ellesmera.com
     deploy:
       mode: replicated
       replicas: 1
@@ -34,6 +37,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./config/:/etc/traefik/:rw
+      - ./rules/:/rules:rw
     networks:
       - docker2docker
   
