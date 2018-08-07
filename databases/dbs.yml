@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.6'
 
 services:
 
@@ -79,6 +79,7 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: example
+      PGDATA: /database
       
     # metadata to registrator
       SERVICE_NAME: postgresql
