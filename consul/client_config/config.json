@@ -1,5 +1,4 @@
 {
-    "node_name": "${HOSTNAME}",
     "advertise_addr" : "{{ GetInterfaceIP \"eth0\" }}",
     "bind_addr": "{{ GetInterfaceIP \"eth0\" }}",
     "client_addr": "0.0.0.0",
@@ -7,12 +6,11 @@
     "datacenter": "DC1",
     "leave_on_terminate" : true,
     "retry_join" : [
-        "consul.server"
+        "server_bootstrap"
     ],
-    "server_name" : "${HOSTNAME}",
     "skip_leave_on_interrupt" : false,
     "server" : false,
     "ui" : false,
     "disable_update_check": true,
-    "log_level": "warn"
+    "log_level": "debug"
   }
