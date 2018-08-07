@@ -13,7 +13,7 @@ You can find boths here.
 
 ### Running
 ```
-docker stack deploy -c nginx www
+docker stack deploy -c nginx.yml www
 ```
 
 ### Checking
@@ -27,5 +27,7 @@ docker stack ls
 
 ### Authors
 Rodrigo Carvalho
+
 DevOps Engineering
+
 Skype: rdgacarvalho
