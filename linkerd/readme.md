@@ -28,7 +28,7 @@ docker stack ls
 
 To access the WebUI and see the incomming and outcomming requests type
 ```
-http://<ip_of_your_docker_node>:9090
+http://<ip_of_your_docker_node>:8080
 ```
 
 ### Authors
