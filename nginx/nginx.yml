@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.6'
 
 services:
 
@@ -6,39 +6,51 @@ services:
     image: jwilder/whoami
     environment:
       SERVICE_NAME: portal1
-      SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:portal1.ellesmera.com
+      SERVICE_TAGS: blue
     labels:
-      - "traefik.backend=ellesmera.com"
-      - "traefik.frontend.rule=Host:portal.ellesmera.com"      
+      - "traefik.enable=true"
+      - "traefik.port=8000"
+      - "traefik.weight=30"
+      - "traefik.backend=portal2"
+      - "traefik.tags=blue"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.stickiness=true"
+      - "traefik.frontend.rule=Host:portal.ellesmera.com"
+      - "traefik.backend.loadbalancer.stickiness.cookieName=blue_cookie"
     deploy:
       replicas: 1
+      endpoint_mode: dnsrr
     networks:
       - docker2docker
-    # logging:
-    #   driver: gelf
-    #   options:
-    #     gelf-address: udp://logstash:12201
-    #     tag: "staging"
-    volumes:
-      - ./html/1/index.html:/usr/share/nginx/html/index.html
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
 
   portal2:
     image: jwilder/whoami
     environment:
       SERVICE_NAME: portal2
-      SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:portal2.ellesmera.com
+      SERVICE_TAGS: green
     labels:
-      - "traefik.backend=ellesmera.com"
+      - "traefik.enable=true"
+      - "traefik.port=8000"
+      - "traefik.backend=portal2"
+      - "traefik.tags=green"
+      - "traefik.weight=20"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.stickiness=true"
       - "traefik.frontend.rule=Host:portal.ellesmera.com"
-    volumes:
-      - ./html/2/index.html:/usr/share/nginx/html/index.html
-    # logging:
-    #   driver: gelf
-    #   options:
-    #     gelf-address: udp://logstash:12201
-    #     tag: "staging"
+      - "traefik.backend.loadbalancer.stickiness.cookieName=green_cookie"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     deploy:
       replicas: 1
+      endpoint_mode: dnsrr
     networks:
       - docker2docker
 
