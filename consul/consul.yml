@@ -14,6 +14,18 @@ services:
       - "./client_config/config.json:/consul/config/config.json:rw"
     deploy:
       replicas: 2
+      endpoint_mode: dnsrr
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 120s
+      resources:
+        limits:
+          memory: 1G      
     networks:
       - docker2docker
 
@@ -51,10 +63,19 @@ services:
       CONSUL_UI_BETA: "true"
     labels:
       - "SERVICE_IGNORE=true"          
-      - "traefik.enable=false"
-    ports:
-      - "8500:8500"
-    command: "agent -server -bootstrap-expect 3 -ui -client 0.0.0.0 -bind '{{ GetInterfaceIP \"eth0\" }}'"
+      - "traefik.enable=true"
+      - "traefik.port=8500"
+      - "traefik.backend=consul"
+      - "traefik.tags=green"
+      - "traefik.weight=5"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.stickiness=true"
+      - "traefik.frontend.rule=Host:consul.ellesmera.com"
+      - "traefik.backend.loadbalancer.stickiness.cookieName=consul_cookie"
+
+    command: "agent -server -bootstrap-expect 3"
+    volumes:
+      - "./bootstrap_config/config.json:/consul/config/config.json:rw"
     networks:
       - docker2docker
 
