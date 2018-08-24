@@ -6,15 +6,16 @@
     "datacenter": "DC1",
     "leave_on_terminate" : true,
     "skip_leave_on_interrupt" : true,
-    
-    "retry_join" : [
-        "server_bootstrap"
-    ],
-    
+  
     "server" : false,
     "ui" : false,
 
     "disable_update_check": true,
-    "log_level": "debug"
+    "log_level": "warn",
 
+    "encrypt": "8I0FY7QnaAeESSgEOfr3xQ==",
+
+    "acl_datacenter": "dc1",
+    "acl_down_policy": "extend-cache"
+    
   }

@@ -1,0 +1,6 @@
+{                      
+  "Name": "git_slave",
+  "Type": "client",
+  "Rules": "key git/lastcommit {policy = read}"
+}
+

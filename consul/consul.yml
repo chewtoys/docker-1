@@ -6,7 +6,15 @@ services:
     image: consul:latest
     labels:
       - "SERVICE_IGNORE=true"        
-      - "traefik.enable=false"
+      - "traefik.enable=true"
+      - "traefik.port=8500"
+      - "traefik.backend=consul_clients"
+      - "traefik.tags=green"
+      - "traefik.weight=5"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.stickiness=true"
+      - "traefik.frontend.rule=Host:consulc.ellesmera.com"
+      - "traefik.backend.loadbalancer.stickiness.cookieName=consulc_cookie"      
     command: "agent -retry-join server_bootstrap"
     depends_on:
       - server_bootstrap
@@ -34,6 +42,14 @@ services:
     labels:
       - "SERVICE_IGNORE=true"        
       - "traefik.enable=false"
+      - "traefik.port=8500"
+      - "traefik.backend=consul_server"
+      - "traefik.tags=green"
+      - "traefik.weight=5"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.stickiness=true"
+      - "traefik.frontend.rule=Host:consuls.ellesmera.com"
+      - "traefik.backend.loadbalancer.stickiness.cookieName=consuls_cookie"
     command: "agent -server -retry-join server_bootstrap"
     depends_on:
       - server_bootstrap
@@ -65,15 +81,15 @@ services:
       - "SERVICE_IGNORE=true"          
       - "traefik.enable=true"
       - "traefik.port=8500"
-      - "traefik.backend=consul"
+      - "traefik.backend=consul_server"
       - "traefik.tags=green"
       - "traefik.weight=5"
       - "traefik.backend.loadbalancer.method=drr"
       - "traefik.backend.loadbalancer.stickiness=true"
-      - "traefik.frontend.rule=Host:consul.ellesmera.com"
-      - "traefik.backend.loadbalancer.stickiness.cookieName=consul_cookie"
+      - "traefik.frontend.rule=Host:consuls.ellesmera.com"
+      - "traefik.backend.loadbalancer.stickiness.cookieName=consuls_cookie"
 
-    command: "agent -server -bootstrap-expect 3"
+    command: "agent -server"
     volumes:
       - "./bootstrap_config/config.json:/consul/config/config.json:rw"
     networks:
@@ -81,6 +97,9 @@ services:
 
   registrator:
     image: gliderlabs/registrator:latest
+    environment:
+      SERVICE_NAME: registrator
+      CONSUL_HTTP_TOKEN: "4eeeef34-a7b2-226d-9b3f-c4062dec00d6"
     labels:
       - "SERVICE_IGNORE=true"
       - "traefik.enable=false"

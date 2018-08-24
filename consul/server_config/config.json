@@ -8,13 +8,20 @@
     "skip_leave_on_interrupt" : true,
     
     "server" : true,
-    "ui" : false,
+    "ui" : true,
     
     "autopilot": {
       "cleanup_dead_servers": true
     },
 
     "disable_update_check": true,
-    "log_level": "debug"
+    "log_level": "warn",
+    
+    "encrypt": "8I0FY7QnaAeESSgEOfr3xQ==",
 
+    "acl_datacenter": "dc1",
+    "acl_default_policy": "deny",
+    "acl_down_policy": "extend-cache",
+    "acl_master_token": "cf676587-d0f8-806f-dffa-f35855a97559"
+    
 }
