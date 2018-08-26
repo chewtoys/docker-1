@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# set -x
+set -x
 
 # Setup Consul ACLs on servers and clients
 
-SERVERS="consul-stg.affinitas.io"
-CLIENTS_CONSUL="consul-stg.affinitas.io"
-CLIENTS_VAULT="vault-stg.affinitas.io"
+SERVERS="consul.ellesmera.com"
+CLIENTS_CONSUL="clients.ellesmera.com"
+CLIENTS_VAULT="vault.ellesmera.com"
 
 function initial_token() {
 
@@ -37,7 +37,40 @@ function create_agent_token() {
         do
 
             echo "----> $i"
-            curl -X PUT -H "X-Consul-Token: $MASTER_TOKEN" -d '{"Name": "Agent Token","Type": "client","Rules": "node \"\" { policy = \"write\" } service \"\" { policy = \"read\" }"}' http://$SERVERS/v1/acl/create -o "client_token"
+            curl -X PUT -H "X-Consul-Token: $MASTER_TOKEN" -d \ 
+            '{"Name": "Agent Token","Type": "client","Rules": "node \"\" { policy = \"write\" } service \"\" { policy = \"read\" }"}' \
+             http://$SERVERS/v1/acl/create -o "client_token"
+            curl -X PUT -H "X-Consul-Token: $MASTER_TOKEN" -d \
+            '{
+                "Name": "Vault",
+                "key": {
+                    "vault/": {
+                    "policy": "write"
+                    }
+                },
+                "node": {
+                    "": {
+                    "policy": "write"
+                    }
+                },
+                "service": {
+                    "vault": {
+                    "policy": "write"
+                    }
+                },
+                "agent": {
+                    "": {
+                    "policy": "write"
+                    }
+
+                },
+                "session": {
+                    "": {
+                    "policy": "write"
+                    }
+                }
+            }' \
+            http://$SERVERS/v1/acl/create -o "client_token"
             sleep 2;
 
     done;
@@ -72,9 +105,7 @@ function enable_acl_clients() {
     for i in {1..2}
     do
         curl -X PUT -H "X-Consul-Token: ${MASTER_TOKEN}" -d '{ "Token": "'${CLIENT_TOKEN}'" }' http://$CLIENTS_CONSUL/v1/agent/token/acl_agent_token
-        sleep 2;
-        curl -X PUT -H "X-Consul-Token: ${MASTER_TOKEN}" -d '{ "Token": "'${CLIENT_TOKEN}'" }' http://$CLIENTS_VAULT/v1/agent/token/acl_agent_token
-        sleep 2;
+        sleep 1;
     done
 
     echo "ACL Clients enabled."
