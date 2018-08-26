@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.6'
 
 services:
 
@@ -8,12 +8,14 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.1.2
     domainname: ellesmera.org
     environment:
+      - SERVICE_NAME="elasticsearch"
+      - SERVICE_TAGS="elastic,node1"    
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     # metadata to registrator
       - SERVICE_NAME=elasticsearch
-      - SERVICE_TAGS=elastic
+      - SERVICE_TAGS=elastic1
 
     deploy:
         replicas: 1
@@ -48,7 +50,7 @@ services:
       - "discovery.zen.ping.unicast.hosts=elasticsearch"
     # metadata to registrator
       - SERVICE_NAME=elasticsearch2
-      - SERVICE_TAGS= elastic
+      - SERVICE_TAGS= elastic2
 
     volumes:
       - esdata2:/usr/share/elasticsearch/data
@@ -56,24 +58,6 @@ services:
     networks:
       - docker2docker
 
-# MetricBeats Statements
-
-  metricbeat:
-
-    image: docker.elastic.co/beats/metricbeat:6.1.2
-    restart: always
-    domainname: ellesmera.org
-
-    environment:
-    # metadata to registrator
-        SERVICE_NAME: metricbeat
-        SERVICE_TAGS: elastic
-    volumes:
-      - ./configs/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-
-    networks:
-      - docker2docker
 
 # Kibana Statements
 
@@ -98,25 +82,6 @@ services:
 
     networks:
       - docker2docker
-    image:  docker.elastic.co/kibana/kibana:6.1.2
-    restart: always
-    domainname: ellesmera.org
-    environment:
-      SERVER_NAME: kibana
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-    
-    # metadata to registrator
-      SERVICE_NAME: elasticsearch
-      SERVICE_TAGS: elastic
-
-    volumes:
-      - ./configs/kibana.yml:/usr/share/kibana/kibana.yml
-
-    ports:
-      - "5601:5601"
-
-    networks:
-      - docker2docker
 
 
   logstash:
@@ -126,7 +91,7 @@ services:
     
     # metadata to registrator
       SERVICE_NAME: logstash
-      SERVICE_TAGS: elastic
+      SERVICE_TAGS: logs
 
     ports:
       - 9600:9600
