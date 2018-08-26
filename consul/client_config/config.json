@@ -11,11 +11,10 @@
     "ui" : false,
 
     "disable_update_check": true,
-    "log_level": "warn",
+    "log_level": "debug",
 
     "encrypt": "8I0FY7QnaAeESSgEOfr3xQ==",
 
-    "acl_datacenter": "dc1",
-    "acl_down_policy": "extend-cache"
+    "acl_datacenter": "dc1"
     
   }

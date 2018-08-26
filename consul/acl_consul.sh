@@ -5,7 +5,11 @@ set -x
 # Setup Consul ACLs on servers and clients
 
 SERVERS="consul.ellesmera.com"
+<<<<<<< HEAD
 CLIENTS_CONSUL="clients.ellesmera.com"
+=======
+CLIENTS_CONSUL="consul-clientes.ellesmera.com"
+>>>>>>> d5018c6e4c134a3c142faf7cacec8d8d36ff6d25
 CLIENTS_VAULT="vault.ellesmera.com"
 
 function initial_token() {

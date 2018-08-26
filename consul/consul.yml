@@ -13,7 +13,7 @@ services:
       - "traefik.weight=5"
       - "traefik.backend.loadbalancer.method=drr"
       - "traefik.backend.loadbalancer.stickiness=true"
-      - "traefik.frontend.rule=Host:consulc.ellesmera.com"
+      - "traefik.frontend.rule=Host:clients.ellesmera.com"
       - "traefik.backend.loadbalancer.stickiness.cookieName=consulc_cookie"      
     command: "agent -retry-join server_bootstrap"
     depends_on:
@@ -41,14 +41,14 @@ services:
     image: consul:latest
     labels:
       - "SERVICE_IGNORE=true"        
-      - "traefik.enable=false"
+      - "traefik.enable=true"
       - "traefik.port=8500"
       - "traefik.backend=consul_server"
       - "traefik.tags=green"
       - "traefik.weight=5"
       - "traefik.backend.loadbalancer.method=drr"
       - "traefik.backend.loadbalancer.stickiness=true"
-      - "traefik.frontend.rule=Host:consuls.ellesmera.com"
+      - "traefik.frontend.rule=Host:consul.ellesmera.com"
       - "traefik.backend.loadbalancer.stickiness.cookieName=consuls_cookie"
     command: "agent -server -retry-join server_bootstrap"
     depends_on:
@@ -86,12 +86,28 @@ services:
       - "traefik.weight=5"
       - "traefik.backend.loadbalancer.method=drr"
       - "traefik.backend.loadbalancer.stickiness=true"
-      - "traefik.frontend.rule=Host:consuls.ellesmera.com"
+      - "traefik.frontend.rule=Host:consul.ellesmera.com"
       - "traefik.backend.loadbalancer.stickiness.cookieName=consuls_cookie"
-
     command: "agent -server"
     volumes:
       - "./bootstrap_config/config.json:/consul/config/config.json:rw"
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 120s
+      resources:
+        limits:
+          memory: 1G      
+    ports:
+      - 8500:8500
     networks:
       - docker2docker
 
@@ -99,7 +115,7 @@ services:
     image: gliderlabs/registrator:latest
     environment:
       SERVICE_NAME: registrator
-      CONSUL_HTTP_TOKEN: "4eeeef34-a7b2-226d-9b3f-c4062dec00d6"
+      CONSUL_HTTP_TOKEN: "01f47f9e-f989-966b-9acc-f88fde2e7f9f"
     labels:
       - "SERVICE_IGNORE=true"
       - "traefik.enable=false"

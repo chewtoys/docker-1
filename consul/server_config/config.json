@@ -15,13 +15,12 @@
     },
 
     "disable_update_check": true,
-    "log_level": "warn",
+    "log_level": "debug",
     
     "encrypt": "8I0FY7QnaAeESSgEOfr3xQ==",
 
     "acl_datacenter": "dc1",
     "acl_default_policy": "deny",
-    "acl_down_policy": "extend-cache",
-    "acl_master_token": "cf676587-d0f8-806f-dffa-f35855a97559"
+    "acl_down_policy": "extend-cache"
     
 }
