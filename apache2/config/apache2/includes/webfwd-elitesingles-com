@@ -1,0 +1,17 @@
+GeoIPEnable On  
+GeoIPDBFile /usr/share/GeoIP/GeoIP.dat  
+
+RewriteCond     %{HTTP_HOST}                (.*.|)elitesingles\.com$            [NC]
+RewriteCond     %{ENV:GEOIP_COUNTRY_CODE}   ^IE$  
+RewriteRule     (.*)                        http://www.elitesingles.ie$1        [L]
+
+RewriteCond     %{HTTP_HOST}                (.*.|)elitesingles\.com$            [NC]
+RewriteCond     %{ENV:GEOIP_COUNTRY_CODE}   ^AU$  
+RewriteRule     (.*)                        http://www.elitesingles.com.au$1    [L]
+
+RewriteCond     %{HTTP_HOST}                (.*.|)elitesingles\.com$            [NC]
+RewriteCond     %{ENV:GEOIP_COUNTRY_CODE}   ^NZ$  
+RewriteRule     (.*)                        http://www.elitesingles.co.nz$1     [L]
+
+RewriteCond     %{HTTP_HOST}                (.*.|)elitesingles\.com$            [NC]
+RewriteRule     (.*)                        http://www.elitesingles.co.uk$1     [L]

@@ -1,0 +1,33 @@
+version: '3.6'
+
+services:
+
+  apache2:
+    image: tutum/apache-php
+    environment:
+      SERVICE_NAME: apache2
+      SERVICE_TAGS: traefik.enable=true,traefik.frontend.rule=Host:apche2.ellesmera.com
+    labels:
+      - "traefik.backend=apache2"
+      - "traefik.frontend.rule=Host:apache.ellesmera.com"      
+    deploy:
+      replicas: 1
+      endpoint_mode: vip
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - docker2docker
+    volumes:
+      - ./config/apache2/sites-enabled:/etc/apache2/sites-enabled:rw
+      - ./config/apache2/sites-available:/etc/apache2/sites-available:rw
+      - ./config/dating.attractiveworld.com:/app:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+networks:
+  docker2docker:
+    external: true

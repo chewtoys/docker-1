@@ -1,0 +1,7 @@
+# AIS-2456 LPR apache environment vars
+# lptenv_beta
+
+SetEnv LPR_BACKEND_HOST        https://beta-lpt.affinitas.de
+SetEnv LPR_CREDENTIALS_PATH    /data/www-data/beta-lpr/credentials.php
+SetEnv LPR_OUTPUT_PATH         /data/www-data/lpr-output
+SetEnv LPR_DEBUG_LOG           true

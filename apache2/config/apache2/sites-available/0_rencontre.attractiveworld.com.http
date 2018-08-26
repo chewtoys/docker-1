@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+	ServerName rencontre.attractiveworld.com
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www/rencontre.attractiveworld.com
+ 
+        #Restrict access to our office
+        #Include includes/restriction   
+    #Include includes/block_ip
+    Include includes/all
+
+	ErrorLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/rencontre.attractiveworld.com.error_log.%Y-%m-%d.log 86400"
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/rencontre.attractiveworld.com.access_log.%Y-%m-%d.log 86400" combined
+</VirtualHost>

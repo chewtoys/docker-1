@@ -1,0 +1,21 @@
+<VirtualHost *:80>
+  ServerName www.qupid-date.co.uk
+  ServerAlias qupid-date.co.uk
+  ServerAdmin webmaster@localhost
+
+  DocumentRoot /var/www/www.qupid-date.co.uk
+
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+
+    Include includes/all
+
+  ErrorLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/www.qupid-date.co.uk.error_log.%Y-%m-%d.log 86400"
+
+  # Possible values include: debug, info, notice, warn, error, crit,
+  # alert, emerg.
+  LogLevel warn
+
+  CustomLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/www.qupid-date.co.uk.access_log.%Y-%m-%d.log 86400" combined
+</VirtualHost>

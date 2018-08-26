@@ -1,0 +1,53 @@
+<VirtualHost *:443>
+    ServerName  beta.affinitas.de
+    ServerAdmin webmaster@localhost
+
+    SSLEngine on
+    SSLCertificateFile      /etc/ssl/affinitas/wildcard.affinitas.de.crt
+    SSLCertificateKeyFile   /etc/ssl/affinitas/wildcard.affinitas.de.key
+    SSLCertificateChainFile /etc/ssl/affinitas/wildcard.affinitas.de.ca-bundle
+    SSLOptions +StdEnvVars
+    SetEnv  HTTPS   on
+
+    DocumentRoot /var/www/beta.affinitas.de/current
+
+    Include includes/protect_internal_files
+
+    <IfModule mod_rewrite.c>
+        RewriteEngine       On
+        ProxyPreserveHost   On
+        
+        # M.Kalinna 2013-05-16 AIS-648
+        RewriteCond  %{REQUEST_URI}   ^/$
+        RewriteCond  %{QUERY_STRING}  ^lng=(en)
+        RewriteRule  .*               /%1?        [R=permanent,L]
+
+        RewriteCond  %{HTTP_HOST}    ^beta\.affinitas\.de$
+        RewriteCond  %{REQUEST_URI}  ^/(en|EN)$
+        RewriteRule  (.*)            https://beta.affinitas.de/index.php?lng=en  [P,L]
+
+        # AIS-3099 lscheidler
+        RewriteCond  %{REQUEST_URI}  ^/career                         [OR]
+        RewriteCond  %{REQUEST_URI}  ^/career/jobs/[A-Z0-9]*
+        RewriteRule  (.*)            /                                [QSA,PT]
+    </IfModule>
+
+    <Directory />
+        Options FollowSymLinks
+        AllowOverride None
+    </Directory>
+    <Directory /var/www/affinitas.de/current>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    </Directory>
+
+    ErrorLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/beta.affinitas.de_ssl.error_log.%Y-%m-%d.log 86400"
+
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+
+    CustomLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/beta.affinitas.de_ssl.access_log.%Y-%m-%d.log 86400" combined
+</VirtualHost>

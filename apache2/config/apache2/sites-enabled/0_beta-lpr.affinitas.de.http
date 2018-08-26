@@ -1,0 +1,43 @@
+<VirtualHost *:80>
+	ServerName  beta-lpr.affinitas.de
+	ServerAlias beta-lpr
+	ServerAdmin webmaster@affinitas.de
+
+	DocumentRoot /var/www/beta-lpr.affinitas.de/current
+
+    Include includes/protect_internal_files
+    include includes/lptenv_beta
+
+    # AIS-2643
+    Header set Access-Control-Allow-Origin "https://beta-lpt.affinitas.de"
+    Header set Access-Control-Allow-Headers "Accept,Accept-Charset,Accept-Encoding,Accept-Language,Connection,Content-Type,Cookie,DNT,Host,Keep-Alive,Origin,Referer,User-Agent,X-CSRF-Token,X-Requested-With"
+    Header set Access-Control-Allow-Methods "*"
+    Header set Access-Control-Allow-Credentials true
+
+    <IfModule mod_rewrite.c>
+        RewriteEngine  On
+        RewriteCond    %{REQUEST_URI}   ^/lpr/templates/.* [NC]
+        RewriteRule    /lpr/(.*)$       /$1
+ 
+        RewriteCond    %{REQUEST_URI}   ^/lpr/.* [NC]
+        RewriteRule    /lpr/(.*)/?      /render.php?file=$1   [QSA,L]
+    </IfModule>
+
+	<Directory /var/www/beta-lpr.affinitas.de/current/>
+		Options FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+    RewriteLog "/tmp/rewrite.log"
+    RewriteLogLevel 3
+
+	ErrorLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/beta-lpr.affinitas.de.error_log.%Y-%m-%d.log 86400"
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/beta-lpr.affinitas.de.access_log.%Y-%m-%d.log 86400" combined
+</VirtualHost>

@@ -1,0 +1,12 @@
+<Location />
+    Php_value auto_prepend_file /var/lib/affinitas/AffinitasTrackingSDK.php
+</Location>
+
+<Directory />
+    Options -Indexes
+</Directory>
+
+# AIS-2434
+Include includes/lpr
+
+# ex: set syntax=apache tabstop=4 expandtab:

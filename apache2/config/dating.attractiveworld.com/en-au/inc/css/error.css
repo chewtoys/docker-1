@@ -1,0 +1,30 @@
+.ed-error{
+	opacity: 0;
+  transition: opacity 0.5s ease;
+  display: block;
+  font-family: mkabelregular, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  font-weight: bold;
+  color: #ec6;
+  position: absolute;
+  bottom: -24px;
+  border-top: 1px solid #ec6;
+	-webkit-font-smoothing: antialiased;
+}
+.show-error .ed-error{
+	opacity: 1;
+}
+.show-birthday-error .birthday-error{
+  opacity: 1;
+}
+.show-age-error .age-error{
+  opacity: 1;
+}
+
+@media only screen and (min-width: 768px){
+	.ed-error{
+		bottom: -20px;
+	}
+}

@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+	ServerName dating.silversingles.net
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www/dating.silversingles.net
+
+  Include includes/all
+
+	ErrorLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/dating.silversingles.net.error_log.%Y-%m-%d.log 86400"
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog "|/usr/sbin/rotatelogs ${APACHE_LOG_DIR}/dating.silversingles.net.access_log.%Y-%m-%d.log 86400" combined
+</VirtualHost>
