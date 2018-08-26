@@ -4,9 +4,9 @@
 
 # Setup Consul ACLs on servers and clients
 
-SERVERS="consul-stg.affinitas.io"
-CLIENTS_CONSUL="consul-stg.affinitas.io"
-CLIENTS_VAULT="vault-stg.affinitas.io"
+SERVERS="consul.ellesmera.com"
+CLIENTS_CONSUL="consul-clientes.ellesmera.com"
+CLIENTS_VAULT="vault.ellesmera.com"
 
 function initial_token() {
 
