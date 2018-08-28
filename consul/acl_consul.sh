@@ -41,7 +41,7 @@ function create_agent_token() {
         do
 
             echo "----> $i"
-            curl -s -X PUT -H "X-Consul-Token: $MASTER_TOKEN" -d '{"Name": "Agent Token","Type": "client","Rules": "node \"\" { policy = \"write\" } service \"\" { policy = \"read\" }"}' http://$SERVERS_CONSUL/v1/acl/create -o "client_token_$i"
+            curl -s -X PUT -H "X-Consul-Token: $MASTER_TOKEN" -d '{"Name": "Agent Token '$i'","Type": "client","Rules": "node \"\" { policy = \"write\" } service \"\" { policy = \"read\" }"}' http://$SERVERS_CONSUL/v1/acl/create -o "client_token_$i"
             
             sleep 2;
     done;
