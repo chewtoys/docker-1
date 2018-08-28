@@ -23,6 +23,9 @@ services:
         max-size: "200k"
         max-file: "10"
 
+    volumes:
+      - ./course:/opt/:rw
+
   mongo-express:
     image: mongo-express
     restart: always
@@ -43,6 +46,7 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
+
 
 networks:
   docker2docker:
