@@ -37,10 +37,12 @@ Accessing the WebUI
 http://<ip_of_your_docker_node>:8500
 ```
 
-### Securities
-I am working on security part such as ACLs, Intentions and so on
+### ACL setup
+
 
 ### Authors
 Rodrigo Carvalho
+
 DevOps Engineering
+
 Skype: rdgacarvalho

@@ -37,7 +37,7 @@ services:
     networks:
       - docker2docker
 
-  server:
+  servers:
     image: consul:latest
     labels:
       - "SERVICE_IGNORE=true"        
@@ -48,7 +48,7 @@ services:
       - "traefik.weight=5"
       - "traefik.backend.loadbalancer.method=drr"
       - "traefik.backend.loadbalancer.stickiness=true"
-      - "traefik.frontend.rule=Host:consul.ellesmera.com"
+      - "traefik.frontend.rule=Host:servers.ellesmera.com"
       - "traefik.backend.loadbalancer.stickiness.cookieName=consuls_cookie"
     command: "agent -server -retry-join server_bootstrap"
     depends_on:
