@@ -93,7 +93,7 @@ defaultEntryPoints = ["http"]
 
   # frontEndRule = "Host:{{.Tags}}.{{.Domain}}"
   frontEndRule = "Host:{{.ServiceName}}.{{.Domain}}"
-  # frontEndRule = "Host:{{getTag  .ServiceName }}.{{.Domain}}"
+  # frontEndRule = "Host:{{getTag  .ServiceName }}"
 [metrics]
 
   watch = true

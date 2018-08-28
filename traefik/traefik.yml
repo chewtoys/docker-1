@@ -9,7 +9,7 @@ services:
       SERVICE_NAME: traefik
       SERVICE_TAGS: lb, proxy
     labels:
-      - "SERVICE_IGNORE=true"      
+      - "SERVICE_IGNORE=false"      
       - "traefik.enable=false"   
     command: --file.watch --docker --docker.watch --docker.domain=ellesmera.com
     deploy:
