@@ -7,7 +7,7 @@ Nginx is a super lightwieght web server able to handle thousands of connections 
 ### Prerequisites
 
 ```
-Last version of docker in a swarm mode to using that stack as well a consul service discovery and a loadbalancer.
+Last version of docker in a swarm mode to use that stack as well a consul service discovery and a loadbalancer.
 You can find boths here.
 ```
 

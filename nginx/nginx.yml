@@ -38,7 +38,7 @@ services:
       - "traefik.port=8000"
       - "traefik.backend=portal2"
       - "traefik.tags=green"
-      - "traefik.weight=20"
+      - "traefik.weight=30"
       - "traefik.backend.loadbalancer.method=drr"
       - "traefik.backend.loadbalancer.stickiness=true"
       - "traefik.frontend.rule=Host:portal.ellesmera.com"
