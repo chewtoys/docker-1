@@ -7,7 +7,7 @@ listener "tcp" {
 }
 
 storage "consul" {
-  address       = "consul_servers:8500"
+  address       = "consul_clients:8500"
   path          = "vault/"
   scheme        = "http"
   service       = "vault"
