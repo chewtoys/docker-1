@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
 
-  client:
+  clients:
     image: consul:latest
     labels:
       - "SERVICE_IGNORE=true"        
