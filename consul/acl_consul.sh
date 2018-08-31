@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -x
+# set -x
 
 # Setup Consul ACLs on servers and clients
 
@@ -24,15 +24,17 @@ function initial_token() {
         exit 1;
     fi
 
-    # sleep 5
+    sleep 5
 
-    # create_agent_token
+    create_agent_token
 }
 
 function create_agent_token() {
     
     MASTER_TOKEN=$(grep "acl_master_token" bootstrap_config/config.json | awk -F'"' '{print $4}')
     
+    echo "ACL_MASTER_TOKEN:   $MASTER_TOKEN"
+
     echo "Create an Agent Token"
 
     curl -s -X PUT -H "X-Consul-Token: $MASTER_TOKEN" -d '{"Name": "Agent Token","Type": "client","Rules": "node \"\" { policy = \"write\" } service \"\" { policy = \"read\" }"}' http://$SERVERS/v1/acl/create -o "client_token"
@@ -49,7 +51,9 @@ function create_agent_token() {
     CLIENT_TOKEN=`awk -F'"' '{ print $4 }' client_token`
 
     echo "Agent Token created."
-    # set_agent_token
+    
+    set_agent_token
+
 }
 
 function set_agent_token() {
