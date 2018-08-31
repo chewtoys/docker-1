@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# set -x
-
 # Setup Consul ACLs on servers and clients
 
 SERVERS="consul.ellesmera.com"
