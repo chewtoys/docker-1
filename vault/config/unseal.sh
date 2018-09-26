@@ -4,16 +4,17 @@
 KEYS_FILE=keys.txt
 UNSEAL_KEYS=ukeys.txt
 
-# Initializing vault
-vault operator init > $KEYS_FILE
 
 function init() {
 
-if [ $? -eq 0 ]; then
-    echo "Vault initialized!"
-else
-    echo "Vault initialized already. Wait..."
-fi
+    # Initializing vault
+    vault operator init > $KEYS_FILE
+
+    if [ $? -eq 0 ]; then
+        echo "Vault initialized!"
+    else
+        echo "Vault initialized already. Wait..."
+    fi
 
     unseal
 
@@ -39,8 +40,11 @@ function secrets(){
     # Root token
     echo "Root Token:: $ROOT_TOKEN"
     
+    vault login $ROOT_TOKEN > /dev/null
+    
+    # Activating SSH/Okta
+    vault secrets enable ssh
+    vault auth enable okta
 }
-
-
 
 $@
