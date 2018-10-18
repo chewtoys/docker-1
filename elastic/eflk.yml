@@ -85,7 +85,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./configs/filebeat.yml://usr/share/filebeat/filebeat.yml
-
+    ports:
+      - 5066:5066
 
   logstash:
     image: docker.elastic.co/logstash/logstash:6.4.0
