@@ -1,4 +1,6 @@
 ui = true
+disable_mlock = true
+disable_cache = true
 
 listener "tcp" {
   address         = "vault_server:8200"
@@ -7,7 +9,7 @@ listener "tcp" {
 }
 
 storage "consul" {
-  address       = "consul_clients:8500"
+  address       = "consul_servers:8500"
   path          = "vault/"
   scheme        = "http"
   service       = "vault"
@@ -18,3 +20,5 @@ storage "consul" {
 # HA settings
 cluster_addr    = "http://vault_server:8201"
 api_addr        = "http://vault_server:8200"
+
+log_level       = "debug"

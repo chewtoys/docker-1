@@ -3,11 +3,10 @@ version: '3.6'
 services:
 
   server:
-    image: vault:0.10.0
-    privileged: true
+    image: vault:latest
     working_dir: /vault/config/
     environment:
-      VAULT_ADDR: http://vault_server:8200
+      VAULT_ADDR: http://server:8200
       VAULT_ROOT_TOKEN_ID: protectme
       SERVICE_NAME: vault
       SERVICE_TAGS: vault, seal, encrypt
@@ -18,7 +17,7 @@ services:
       - "traefik.frontend.rule=Host:vault.ellesmera.com"        
     volumes:
       - ./config/:/vault/config/:rw
-    command: vault server -config /vault/config/ -log-level=debug
+    command: "vault server -config /vault/config/ -log-level=debug"
     deploy:
       mode: replicated
       replicas: 1
@@ -33,7 +32,9 @@ services:
         window: 120s
       resources:
         limits:
-          memory: 1G  
+          memory: 1G
+    expose:
+      - 8200
     networks:
       - docker2docker
       
