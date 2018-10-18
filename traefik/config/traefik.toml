@@ -1,3 +1,5 @@
+[file]
+
 ################################################################
 # Global configuration
 ################################################################
@@ -67,7 +69,6 @@ defaultEntryPoints = ["http"]
 
   swarmmode = true
 
-  # endpoint = "tcp://10.10.10.10:2375"
   endpoint = "unix:///var/run/docker.sock"
 
   domain = "ellesmera.com"
@@ -83,7 +84,7 @@ defaultEntryPoints = ["http"]
 
   watch = true
   
-  endpoint = "consul_server:8500"
+  endpoint = "consul_servers:8500"
 
   exposedByDefault = true
 
