@@ -69,6 +69,8 @@ function set_agent_token() {
     done
 
     echo "Agent Token Set."
+
+    enable_acl_clients
 }
 
 function enable_acl_clients() {
@@ -85,6 +87,30 @@ function enable_acl_clients() {
     done
 
     echo "ACL Clients enabled."
+
+    acls
 }
 
+function acls () {
+
+    MASTER_TOKEN=$(grep "acl_master_token" bootstrap_config/config.json | awk -F'"' '{print $4}')
+    CLIENT_TOKEN=`awk -F'"' '{ print $4 }' client_token`
+    JAVA_MAILING_ACL="Batch_Mailer"
+
+    echo "Setup ACLs ..."
+    
+    echo -e "${JAVA_MAILING_ACL}: "
+    curl -s -X PUT -d \
+    '{"Name": "'${JAVA_MAILING_ACL}'","Type": "client","Rules": "key \"\" { policy = \"read\" } key \"service/\" { policy = \"read\" } key \"service/batch_mailing/\" { policy = \"write\" } operator = \"read\"" }' http://$SERVERS_CONSUL/v1/acl/create?token=$MASTER_TOKEN
+    echo -e "\n"
+
+    cleanup
+}
+
+function cleanup () {
+    rm -f client_token*
+    if [ $? -eq 0 ]; then
+        echo "Tokens file removed!"
+    fi
+}
 $@
