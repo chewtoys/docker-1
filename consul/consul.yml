@@ -90,7 +90,7 @@ services:
       - "traefik.backend.loadbalancer.stickiness.cookieName=consuls_cookie"
     command: "agent -server"
     volumes:
-      - "./bootstrap_config/config.json:/consul/config/config.json:rw"
+      - "./bootstrap_config/:/consul/config:rw"
     deploy:
       mode: replicated
       replicas: 1
