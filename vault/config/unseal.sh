@@ -3,12 +3,13 @@
 function init() {
     
     ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
+    STATUS=$(vault status|grep -i "initialized"|awk '{ print $2}')
 
     # Initializing vault
-    if [ ! -s $KEYS_FILE ]; then
+    if [ $STATUS = "false" ]; then
         vault operator init > $KEYS_FILE
         echo "Vault initialized!"
-    elif [ $ROOT_TOKEN = "" ] && [ ! -s $KEYS_FILE ]; then
+    elif [ $STATUS = "true" ] && [ ! -s $KEYS_FILE ]; then
         echo -e "Vault is already initialized.\n"
         echo "Token: $ROOT_TOKEN"
         unseal
@@ -33,11 +34,11 @@ function unseal() {
         vault operator unseal $lines
     done < $UNSEAL_KEYS
 
-    audit
+    upgrade_kv
 }
 
-function audit() {
-    
+function upgrade_kv() {
+
     ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
     # Root token
     echo "Root Token:: $ROOT_TOKEN"
@@ -45,14 +46,15 @@ function audit() {
     # Login into Vault 
     vault login $ROOT_TOKEN > /dev/null
 
-    mkdir -p /var/logs/vault/
-
-    vault audit enable file file_path=/var/logs/vault/audit.log
-
+    echo "Upgrading defaulf secret"
+    vault kv enable-versioning secret/
+    vault kv put secret/init pass=s3cr3t
+    
     okta
 }
 
 function okta() {
+
     ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
     # Root token
     echo "Root Token:: $ROOT_TOKEN"
@@ -62,7 +64,7 @@ function okta() {
     
     vault auth enable okta
 
-    vault write auth/okta/config base_url="okta-emea.com" organization="Okta-IT-Operations" token="00Xape2-53TMT4z2siosZXhR5UL-yDSS_V9cPqYIdR"
+    vault write auth/okta/config base_url="okta-emea.com" organization="sparknetworks" token="00Xape2-53TMT4z2siosZXhR5UL-yDSS_V9cPqYIdR"
 
     vault write auth/okta/groups/Okta-IT-Operations policies=Operations
 
@@ -81,8 +83,11 @@ function database() {
 
     vault secrets enable database
 
-}
+    vault write auth/okta/groups/Okta-Vault-DBA policies=DBA
 
+    secrets
+
+}
 
 function secrets() {
     
@@ -100,9 +105,63 @@ function secrets() {
 
     vault secrets enable -path=ssh-client ssh
     vault write -field=public_key ssh-client/config/ca generate_signing_key=true | tee trusted-user-ca-keys.pem
+
+    policies
 }
 
-# Keys file name
+function policies() {
+    
+    ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
+    # Root token
+    echo "Root Token:: $ROOT_TOKEN"
+
+    echo "Creating policies ..."
+
+        for policies in $(ls policies/ | awk -F'.' '{print $1}')
+            do
+                echo "Policy $policies created."
+                vault policy write $policies policies/$policies.hcl
+        done
+
+    users
+}
+
+function users() {
+
+    echo "Userpass enabled."
+    vault auth enable userpass
+
+    echo "Creating user admin (for testing)"
+    vault write auth/userpass/users/admin password=admin policies=devops
+
+    postgres_policy
+}
+
+function postgres_policy() {
+
+    ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
+    # Root token
+    echo "Root Token:: $ROOT_TOKEN"
+
+    # Login into Vault 
+    vault login $ROOT_TOKEN > /dev/null
+
+
+    vault write database/config/postgres \
+    plugin_name=postgresql-database-plugin \
+    allowed_roles="admin" \
+    connection_url="postgresql://{{username}}:{{password}}@db_postgres:5432/postgres?sslmode=disable" \
+    username="postgres" \
+    password="example"
+
+    vault write database/roles/admin \
+    db_name=postgres \
+    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+    default_ttl="1h" \
+    max_ttl="24h"
+}
+
 
 KEYS_FILE=keys.txt 2> /dev/null
 UNSEAL_KEYS=ukeys.txt 2> /dev/null

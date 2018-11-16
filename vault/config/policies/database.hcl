@@ -7,3 +7,7 @@ path "secret/database/*" {
 path "secret/database/users" {
   capabilities = ["read"]
 }
+
+path "secret/database/config/*" {
+  capabilities = ["read","create","list","update","delete"]
+}
