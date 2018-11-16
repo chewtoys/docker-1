@@ -50,6 +50,23 @@ function upgrade_kv() {
     vault kv enable-versioning secret/
     vault kv put secret/init pass=s3cr3t
     
+    policies
+}
+
+function policies() {
+    
+    ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
+    # Root token
+    echo "Root Token:: $ROOT_TOKEN"
+
+    echo "Creating policies ..."
+
+        for policies in $(ls policies/ | awk -F'.' '{print $1}')
+            do
+                echo "Policy $policies created."
+                vault policy write $policies policies/$policies.hcl
+        done
+
     okta
 }
 
@@ -66,7 +83,7 @@ function okta() {
 
     vault write auth/okta/config base_url="okta-emea.com" organization="sparknetworks" token="00Xape2-53TMT4z2siosZXhR5UL-yDSS_V9cPqYIdR"
 
-    vault write auth/okta/groups/Okta-IT-Operations policies=Operations
+    vault write auth/okta/groups/Okta-IT-Operations policies=devops
 
     database
 
@@ -83,7 +100,7 @@ function database() {
 
     vault secrets enable database
 
-    vault write auth/okta/groups/Okta-Vault-DBA policies=DBA
+    vault write auth/okta/groups/Okta-Vault-DBA policies=database
 
     secrets
 
@@ -105,23 +122,6 @@ function secrets() {
 
     vault secrets enable -path=ssh-client ssh
     vault write -field=public_key ssh-client/config/ca generate_signing_key=true | tee trusted-user-ca-keys.pem
-
-    policies
-}
-
-function policies() {
-    
-    ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
-    # Root token
-    echo "Root Token:: $ROOT_TOKEN"
-
-    echo "Creating policies ..."
-
-        for policies in $(ls policies/ | awk -F'.' '{print $1}')
-            do
-                echo "Policy $policies created."
-                vault policy write $policies policies/$policies.hcl
-        done
 
     users
 }
@@ -160,6 +160,7 @@ function postgres_policy() {
         GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
     default_ttl="1h" \
     max_ttl="24h"
+
 }
 
 
