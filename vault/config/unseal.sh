@@ -134,10 +134,11 @@ function users() {
     echo "Creating user admin (for testing)"
     vault write auth/userpass/users/admin password=admin policies=devops
 
-    postgres_policy
+    postgres_access
+
 }
 
-function postgres_policy() {
+function postgres_access() {
 
     ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
     # Root token
@@ -146,18 +147,49 @@ function postgres_policy() {
     # Login into Vault 
     vault login $ROOT_TOKEN > /dev/null
 
+    echo "=====> PostgreSQL"
 
     vault write database/config/postgres \
     plugin_name=postgresql-database-plugin \
-    allowed_roles="admin" \
+    allowed_roles="postgres-admin" \
     connection_url="postgresql://{{username}}:{{password}}@db_postgres:5432/postgres?sslmode=disable" \
     username="postgres" \
     password="example"
 
-    vault write database/roles/admin \
+    vault write database/roles/postgres-admin \
     db_name=postgres \
     creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
-        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+                        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\"; \
+                        ALTER USER Postgres WITH PASSWORD '{{password}}';" \
+    default_ttl="1h" \
+    max_ttl="24h"
+
+    mysql_access
+
+}    
+
+function mysql_access() {
+
+    ROOT_TOKEN=$(cat $KEYS_FILE | grep "Token" | awk '{print $4}')
+    # Root token
+    echo "Root Token:: $ROOT_TOKEN"
+
+    # Login into Vault 
+    vault login $ROOT_TOKEN > /dev/null
+
+    echo "=====>  MySQL"
+
+    vault write database/config/mysql \
+    plugin_name=mysql-database-plugin \
+    connection_url="{{username}}:{{password}}@tcp(db_mysql:3306)/mysql" \
+    allowed_roles="mysql-admin" \
+    username="root" \
+    password="example"
+
+    vault write database/roles/mysql-admin \
+    db_name=my-mysql-database \
+    creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT ON *.* TO '{{name}}'@'%'; \
+                        ALTER USER root@'%' IDENTIFIED BY '{{password}}';" \
     default_ttl="1h" \
     max_ttl="24h"
 
