@@ -81,7 +81,7 @@ function okta() {
     
     vault auth enable okta
 
-    vault write auth/okta/config base_url="okta-emea.com" organization="sparknetworks" token="00Xape2-53TMT4z2siosZXhR5UL-yDSS_V9cPqYIdR"
+    vault write auth/okta/config base_url="okta-emea.com" organization="junttusnetworks" token="00Xape2-53TMT4z2siosZXhR5UL-yDSS_V9cPqYIdR"
 
     vault write auth/okta/groups/Okta-IT-Operations policies=devops
 
@@ -161,10 +161,8 @@ function postgres_access() {
     creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
                         GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\"; \
                         ALTER USER Postgres WITH PASSWORD '{{password}}';" \
-    default_ttl="1h" \
-    max_ttl="24h"
-
-    mysql_access
+    default_ttl="10m" \
+    max_ttl="15m"
 
 }    
 
@@ -187,14 +185,13 @@ function mysql_access() {
     password="example"
 
     vault write database/roles/mysql-admin \
-    db_name=my-mysql-database \
+    db_name=mysql \
     creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT ON *.* TO '{{name}}'@'%'; \
                         ALTER USER root@'%' IDENTIFIED BY '{{password}}';" \
-    default_ttl="1h" \
-    max_ttl="24h"
+    default_ttl="10m" \
+    max_ttl="15m"
 
 }
-
 
 KEYS_FILE=keys.txt 2> /dev/null
 UNSEAL_KEYS=ukeys.txt 2> /dev/null
