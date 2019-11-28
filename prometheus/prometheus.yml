@@ -60,12 +60,13 @@ services:
         - target: 9090
           published: 9090
           protocol: tcp
-    
+    volumes:
+        prom_data:/data
     # Networks
     networks:
         - docker2docker
 
-
+# Grafana service definition
   grafana:
 
     image: grafana/grafana
@@ -113,6 +114,8 @@ services:
 
 volumes:
     grafana:
+        external: true
+    prom_data:
         external: true
 
 networks:

@@ -32,10 +32,12 @@ http://<ip_your_docker_node>:8080
 
 You'll see all providers, frontends and backends of your applications. 
 After deployed traefik please deploy consul and nginx stack to see how traefik works combined with them. 
+_______
+<img src="./webui-dashboard.png">
+_______
 
 ### Authors
-Rodrigo Carvalho
 
-DevOps Engineering
-
+Rodrigo Carvalho </br>
+DevOps Engineering </br>
 Skype: rdgacarvalho

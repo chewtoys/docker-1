@@ -26,8 +26,7 @@ docker stack ls
 ```
 
 ### Authors
-Rodrigo Carvalho
 
-DevOps Engineering
-
+Rodrigo Carvalho </br>
+DevOps Engineering </br>
 Skype: rdgacarvalho

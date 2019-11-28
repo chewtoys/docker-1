@@ -6,8 +6,10 @@ global:
   # The labels to add to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-    monitor: 'master'
-    remote_storage: 'thanos'
+    monitor: 'infrastructure'
+    storage: 'thanos'
+    environment: 'testing'
+
 
 
 # A list of scrape configurations.
