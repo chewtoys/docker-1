@@ -1,0 +1,49 @@
+version: '3.6'
+
+services:
+
+  ui:
+    image: runatlantis/atlantis:latest
+    environment:
+      SERVICE_NAME: atlantis
+      SERVICE_TAGS: blue
+      ATLANTIS_BITBUCKET_USER: rdgacarvalho
+      ATLANTIS_BITBUCKET_TOKEN: QvS9d6QmbgGb3GugmeJm
+      ATLANTIS_GH_URL: https://a2e03ed2.ngrok.io
+      ATLANTIS_GH_USER: atlantis
+      ATLANTIS_GH_TOKEN: 98a6652dbeb50914590b56f475c148482fc06f0e
+      ATLANTIS_GH_WEBHOOK_SECRET: 34b3987cfcc24b456cc8a958e7cf13a99611e58a
+      REPO_WHITELIST: github.com/rdgacarvalho/terraform
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8000"
+      - "traefik.weight=30"
+      - "traefik.backend=atlantis"
+      - "traefik.tags=blue"
+      - "traefik.backend.loadbalancer.method=drr"
+      - "traefik.backend.loadbalancer.stickiness=true"
+      - "traefik.frontend.rule=Host:atlantis.ellesmera.com"
+      - "traefik.backend.loadbalancer.stickiness.cookieName=blue_cookie"
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+    networks:
+      - docker2docker
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    # command: server --log-level="debug" --repo-whitelist='bitbucket.org/rdgacarvalho/terraform/'
+    command: server --log-level="debug" --repo-whitelist='github.com/rdgacarvalho/terraform'
+
+    ports:
+    - target: 4141
+      published: 80
+      protocol: tcp
+      mode: host
+
+networks:
+  docker2docker:
+    external: true
+

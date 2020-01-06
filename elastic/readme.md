@@ -43,6 +43,7 @@ http://<ip_of_your_docker_node>:5601
 ```
 
 ### Authors
-Rodrigo Carvalho
-DevOps Engineering
+
+Rodrigo Carvalho </br>
+DevOps Engineering </br>
 Skype: rdgacarvalho

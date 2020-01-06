@@ -23,10 +23,12 @@ or
 ```
 docker stack ls
 ```
+_______
+<img src="./homescreen.webp"></img>
+_______
 
 ### Authors
-Rodrigo Carvalho
 
-DevOps Engineering
-
+Rodrigo Carvalho </br>
+DevOps Engineering </br>
 Skype: rdgacarvalho
