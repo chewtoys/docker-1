@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 
 services:
 
@@ -7,8 +7,6 @@ services:
     environment:
       SERVICE_NAME: atlantis
       SERVICE_TAGS: blue
-      ATLANTIS_BITBUCKET_USER: rdgacarvalho
-      ATLANTIS_BITBUCKET_TOKEN: QvS9d6QmbgGb3GugmeJm
       ATLANTIS_GH_URL: https://a2e03ed2.ngrok.io
       ATLANTIS_GH_USER: atlantis
       ATLANTIS_GH_TOKEN: 98a6652dbeb50914590b56f475c148482fc06f0e
@@ -34,14 +32,23 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    # command: server --log-level="debug" --repo-whitelist='bitbucket.org/rdgacarvalho/terraform/'
-    command: server --log-level="debug" --repo-whitelist='github.com/rdgacarvalho/terraform'
+
+    command: server --log-level="debug" --repo-whitelist='github.com/rdgacarvalho/terraform' --config='/home/atlantis/repos.yaml'
+
+    configs:
+      - source: repos_config
+        target: /home/atlantis/repos.yaml
 
     ports:
     - target: 4141
       published: 80
       protocol: tcp
       mode: host
+
+configs:
+  repos_config:
+    file: config/repos.yaml
+    external: true
 
 networks:
   docker2docker:

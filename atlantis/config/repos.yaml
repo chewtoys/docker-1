@@ -1,4 +1,6 @@
+# repos lists the config for specific repos.
 repos:
 - id: /.*/
-  allowed_overrides: [apply_requirements, workflow]
+  apply_requirements: [approved, mergeable]
+  allowed_overrides: [workflow]
   allow_custom_workflows: true
