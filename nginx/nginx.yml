@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 
 services:
 
@@ -7,19 +7,21 @@ services:
     environment:
       SERVICE_NAME: portal1
       SERVICE_TAGS: blue
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=8000"
-      - "traefik.weight=30"
-      - "traefik.backend=portal2"
-      - "traefik.tags=blue"
-      - "traefik.backend.loadbalancer.method=drr"
-      - "traefik.backend.loadbalancer.stickiness=true"
-      - "traefik.frontend.rule=Host:portal.ellesmera.com"
-      - "traefik.backend.loadbalancer.stickiness.cookieName=blue_cookie"
     deploy:
-      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.portal1.service=portal1"
+        - "traefik.http.routers.portal1.entrypoints=web,websecure"
+        - "traefik.http.routers.portal1.rule=Host(`portal.ellesmera`)"
+        - "traefik.http.services.portal1.loadbalancer.sticky=true"
+        - "traefik.http.services.portal1.loadbalancer.server.port=8000"
+        - "traefik.http.services.portal1.loadbalancer.server.scheme=http"
+        - "traefik.http.services.portal1.loadbalancer.sticky.cookie.name=portal1"
+        - "traefik.http.services.portal1.loadbalancer.passhostheader=true"
+      replicas: 2
       endpoint_mode: dnsrr
+    expose:
+      - "8000"
     networks:
       - docker2docker
     logging:
@@ -33,26 +35,28 @@ services:
     environment:
       SERVICE_NAME: portal2
       SERVICE_TAGS: green
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=8000"
-      - "traefik.backend=portal2"
-      - "traefik.tags=green"
-      - "traefik.weight=30"
-      - "traefik.backend.loadbalancer.method=drr"
-      - "traefik.backend.loadbalancer.stickiness=true"
-      - "traefik.frontend.rule=Host:portal.ellesmera.com"
-      - "traefik.backend.loadbalancer.stickiness.cookieName=green_cookie"
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.portal2.service=portal2"
+        - "traefik.http.routers.portal2.entrypoints=web,websecure"
+        - "traefik.http.routers.portal2.rule=Host(`portal.ellesmera`)"
+        - "traefik.http.services.portal2.loadbalancer.sticky=true"
+        - "traefik.http.services.portal2.loadbalancer.server.port=8000"
+        - "traefik.http.services.portal2.loadbalancer.server.scheme=http"
+        - "traefik.http.services.portal2.loadbalancer.sticky.cookie.name=portal2"
+        - "traefik.http.services.portal2.loadbalancer.passhostheader=true"
+      replicas: 2
+      endpoint_mode: dnsrr
+    expose:
+      - "8000"
+    networks:
+      - docker2docker
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
-    deploy:
-      replicas: 1
-      endpoint_mode: dnsrr
-    networks:
-      - docker2docker
 
 networks:
   docker2docker:
